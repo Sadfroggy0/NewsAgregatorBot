@@ -12,20 +12,20 @@ import java.util.List;
 
 
 @Configuration
-public class InlineKeyboard{
+public class Keyboards{
     @Bean
     @Scope("prototype")
     @Qualifier("defaultMenuKeyboard")
-    public InlineKeyboardMarkup defaultMenu(){
+    public InlineKeyboardMarkup defaultMenuKeyboard(){
 
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
         InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
-        inlineKeyboardButton1.setText("Тык");
+        inlineKeyboardButton1.setText("Reuters");
         inlineKeyboardButton1.setCallbackData("Button \"Тык\" has been pressed");
 
-        inlineKeyboardButton2.setText("Тык2");
+        inlineKeyboardButton2.setText("CNBC");
         inlineKeyboardButton2.setCallbackData("Button \"Тык2\" has been pressed");
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
