@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import timofey.utils.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,17 +25,23 @@ public class Keyboards{
 
         InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
         InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
+        InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
+
         inlineKeyboardButton1.setText("Reuters");
-        inlineKeyboardButton1.setCallbackData("Button \"Тык\" has been pressed");
+        inlineKeyboardButton1.setCallbackData(Resources.Reuters.name());
 
         inlineKeyboardButton2.setText("CNBC");
-        inlineKeyboardButton2.setCallbackData("Button \"Тык2\" has been pressed");
+        inlineKeyboardButton2.setCallbackData(Resources.CNBC.name());
+
+        inlineKeyboardButton3.setText("RBK");
+        inlineKeyboardButton3.setCallbackData(Resources.RBK.name());
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
 
         keyboardButtonsRow1.add(inlineKeyboardButton1);
         keyboardButtonsRow2.add(inlineKeyboardButton2);
+        keyboardButtonsRow2.add(inlineKeyboardButton3);
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>(
                 List.of(
                         keyboardButtonsRow1, keyboardButtonsRow2
@@ -70,6 +77,5 @@ public class Keyboards{
         return replyKeyboardMarkup;
 
     }
-
 
 }
