@@ -8,9 +8,13 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import timofey.config.SourceInit;
 import timofey.keyboard.TopicsKeyboard;
 import timofey.utils.Resources;
+import timofey.xmlParser.XMLCNBCParse;
+import timofey.xmlParser.XMLParserByUrl;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -20,7 +24,7 @@ public class CallBackQueryHandler {
     @Autowired
     ReplyKeyboardMarkup replyKeyboardMarkup;
     @Autowired
-    SourceInit resources;
+    SourceInit rssResources;
 
 
     public CallBackQueryHandler() {
@@ -39,31 +43,28 @@ public class CallBackQueryHandler {
         replyMessage.setChatId(userChatId);
 
         if(!userMessage.isEmpty()){
-
-            Map <String,String> filterdMap = new HashMap<>();
-            for (Map.Entry<String, String> entry : resources.getResourceMap().entrySet()) {
-                if (entry.getKey().toLowerCase().contains(userMessage.toLowerCase())) {
-                    filterdMap.put(entry.getKey(), entry.getValue());
+            if (Arrays.stream(Resources.values()).map(x->x.name().toLowerCase()).collect(Collectors.toList()).contains(userMessage.toLowerCase())){
+                Map <String,String> filterdMap = new HashMap<>();
+                for (Map.Entry<String, String> entry : rssResources.getResourceMap().entrySet()) {
+                    if (entry.getKey().toLowerCase().contains(userMessage.toLowerCase())) {
+                        filterdMap.put(entry.getKey(), entry.getValue());
+                    }
+                }
+                TopicsKeyboard topicsKeyboard = new TopicsKeyboard(filterdMap);
+                replyMessage.setText("Выберите тему новостей");
+                replyMessage.setReplyMarkup(topicsKeyboard.getTopicKeyboard());
+            }
+            else if (rssResources.getResourceMap().containsKey(userMessage)){
+                for (String key : rssResources.getResourceMap().keySet()) {
+                    if(userMessage.equals(key)){
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(key + "\n");
+                        sb.append(rssResources.getResourceMap().get(key));
+                        replyMessage.setText(sb.toString());
+                        XMLParserByUrl xmlParser = new XMLCNBCParse(rssResources.getResourceMap().get(key),rssResources);
+                    }
                 }
             }
-            TopicsKeyboard topicsKeyboard = new TopicsKeyboard(filterdMap);
-            replyMessage.setReplyMarkup(topicsKeyboard.getTopicKeyboard());
-
-            if(userMessage.equals(Resources.CNBC.name())){
-                replyMessage.setText("Вы выбрали новостоной источник CNBC");
-            }
-            else if(userMessage.equals(Resources.Reuters.name())){
-                replyMessage.setText("Вы выбрали новостоной источник Reuters");
-
-            }
-            else if(userMessage.equals(Resources.RBK.name())){
-                replyMessage.setText("Вы выбрали новостной источник RBK");
-            }
-            else {
-                replyMessage.setText("Ошибка выбора источника");
-                replyMessage.setReplyMarkup(null);
-            }
-
         }
         return replyMessage;
     }

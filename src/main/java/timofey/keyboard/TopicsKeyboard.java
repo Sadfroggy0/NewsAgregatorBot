@@ -1,41 +1,41 @@
 package timofey.keyboard;
 
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class TopicsKeyboard {
-    private ReplyKeyboardMarkup topicKeyboard;
+    private InlineKeyboardMarkup topicKeyboard;
+
     public TopicsKeyboard(Map<String,String> resourceMap){
 
-        int rows = resourceMap.size() / 3;
-        topicKeyboard = new ReplyKeyboardMarkup();
-        ArrayList<KeyboardRow> keyboard = new ArrayList<>();
+        topicKeyboard = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>(new ArrayList<>());
+        ArrayList<InlineKeyboardButton> row = new ArrayList<>();
 
-
-        topicKeyboard.setSelective(true);
-        topicKeyboard.setResizeKeyboard(true);
-        topicKeyboard.setOneTimeKeyboard(false);
-
-        int i =0;
-        KeyboardRow row = new KeyboardRow();
+        int i = 0;
         for (String key: resourceMap.keySet()) {
             if(i % 3 == 0){
-                keyboard.add(row);
-                row = new KeyboardRow();
+                rowList.add(row);
+                row = new ArrayList<>();
             }
-            row.add(key.split("\\.")[1]);
+            InlineKeyboardButton button = new InlineKeyboardButton();
+            button.setText(key.split("\\.")[1]);
+            button.setCallbackData(key);
+            row.add(button);
             i++;
         }
-        keyboard.add(row);
-
-        topicKeyboard.setKeyboard(keyboard);
+        rowList.add(row);
+        topicKeyboard.setKeyboard(rowList);
 
     }
 
-    public ReplyKeyboardMarkup getTopicKeyboard() {
+    public InlineKeyboardMarkup getTopicKeyboard() {
         return topicKeyboard;
     }
 }

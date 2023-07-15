@@ -51,7 +51,6 @@ public class BotConfig extends TelegramLongPollingBot {
             CallbackQuery callback = update.getCallbackQuery();
             callBackQueryHandler.setCallbackQuery(callback);
 
-
             try {
                 execute(callBackQueryHandler.getReplyMessage());
 
