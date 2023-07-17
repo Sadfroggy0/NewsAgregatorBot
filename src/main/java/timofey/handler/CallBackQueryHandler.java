@@ -5,14 +5,21 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.xml.sax.SAXException;
 import timofey.config.SourceInit;
+import timofey.entities.NewsArticle;
 import timofey.keyboard.TopicsKeyboard;
 import timofey.utils.Resources;
 import timofey.xmlParser.XMLCNBCParse;
 import timofey.xmlParser.XMLParserByUrl;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -36,7 +43,7 @@ public class CallBackQueryHandler {
         this.callbackQuery = callbackQuery;
     }
 
-    public SendMessage getReplyMessage() {
+    public SendMessage getReplyMessage() throws ParserConfigurationException, SAXException, IOException {
 
         Long userChatId = callbackQuery.getFrom().getId();
         String userMessage = callbackQuery.getData();
@@ -60,8 +67,16 @@ public class CallBackQueryHandler {
                         StringBuilder sb = new StringBuilder();
                         sb.append(key + "\n");
                         sb.append(rssResources.getResourceMap().get(key));
-                        replyMessage.setText(sb.toString());
-                        XMLParserByUrl xmlParser = new XMLCNBCParse(rssResources.getResourceMap().get(key),rssResources);
+
+
+                        XMLCNBCParse xmlParser = new XMLCNBCParse(rssResources.getResourceMap().get(key),rssResources);
+                        List<NewsArticle> list = xmlParser.getArticles();
+                        for (NewsArticle s:
+                             list) {
+                            sb.append(s.getPubDate() + "\n" + s.getTitle() +"\n");
+                        }
+                        replyMessage.setText(sb.toString().trim());
+
                     }
                 }
             }

@@ -6,8 +6,12 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.xml.sax.SAXException;
 import timofey.handler.CallBackQueryHandler;
 import timofey.handler.MessageHandler;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 
 @Component
 public class BotConfig extends TelegramLongPollingBot {
@@ -54,7 +58,7 @@ public class BotConfig extends TelegramLongPollingBot {
             try {
                 execute(callBackQueryHandler.getReplyMessage());
 
-            } catch (TelegramApiException e) {
+            } catch (TelegramApiException | ParserConfigurationException | SAXException | IOException e) {
 
             }
 
