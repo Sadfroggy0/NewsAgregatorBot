@@ -10,6 +10,7 @@ import timofey.config.SourceInit;
 import timofey.entities.NewsArticle;
 import timofey.keyboard.TopicsKeyboard;
 import timofey.utils.Resources;
+import timofey.xmlParser.XMLParser;
 import timofey.xmlParser.XmlParserCnbcTemplate;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -62,13 +63,12 @@ public class CallBackQueryHandler {
                     if(userMessage.equals(key)){
                         StringBuilder sb = new StringBuilder();
                         sb.append(key + "\n");
-                        sb.append(rssResources.getResourceMap().get(key));
 
-                        XmlParserCnbcTemplate xmlParser = new XmlParserCnbcTemplate(rssResources.getResourceMap().get(key));
-                        List<NewsArticle> list = xmlParser.getArticles();
-                        for (NewsArticle s:
-                             list) {
-                            sb.append(s.getPubDate() + "\n" + s.getTitle() +"\n");
+                        XMLParser xmlParser = new XmlParserCnbcTemplate(rssResources.getResourceMap().get(key));
+                        List<NewsArticle> list = xmlParser.parseXml();
+                        for (int i = 0; i < list.size(); i++){
+                            NewsArticle article = list.get(i);
+                            sb.append(article.getTitle() + "\n" + article.getLink() + "\n" + article.getDescription() + "\n");
                         }
                         replyMessage.setText(sb.toString().trim());
 

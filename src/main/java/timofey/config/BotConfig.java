@@ -3,6 +3,7 @@ package timofey.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -56,7 +57,8 @@ public class BotConfig extends TelegramLongPollingBot {
             callBackQueryHandler.setCallbackQuery(callback);
 
             try {
-                execute(callBackQueryHandler.getReplyMessage());
+                SendMessage sendMessage = callBackQueryHandler.getReplyMessage();
+                execute(sendMessage);
 
             } catch (TelegramApiException | ParserConfigurationException | SAXException | IOException e) {
 

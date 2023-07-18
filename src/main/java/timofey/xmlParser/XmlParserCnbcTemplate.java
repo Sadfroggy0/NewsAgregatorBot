@@ -6,11 +6,14 @@ import org.xml.sax.helpers.DefaultHandler;
 import timofey.entities.NewsArticle;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class XmlParserCnbcTemplate extends DefaultHandler{
+public class XmlParserCnbcTemplate extends XMLParser{
     private static final String ITEM = "item";
     private static final String TITLE = "title";
     private static final String LINK = "link";
@@ -19,12 +22,25 @@ public class XmlParserCnbcTemplate extends DefaultHandler{
     private static final String PUB_DATE = "pubDate";
 
     private List<NewsArticle> articles;
-    private StringBuilder elementValue;
 
-    public XmlParserCnbcTemplate(String url) throws ParserConfigurationException, SAXException, IOException {
-        XMLParser xmlParserByUrl = new XMLParser(url, this);
-        System.out.println();
+
+    @Override
+    public List<NewsArticle> parseXml() throws ParserConfigurationException, SAXException, IOException {
+        DefaultHandler defaultHandler = new CnbcParser();
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser parser = factory.newSAXParser();
+        parser.parse(getXmlDocument(), defaultHandler);
+        String tempFileName = getXmlDocument().getName();
+        boolean isDeleted = this.deleteTempFile();
+        System.out.println(tempFileName + " id deleted: " + isDeleted);
+        return articles;
+
     }
+
+    public XmlParserCnbcTemplate(String url) throws ParserConfigurationException, IOException, SAXException {
+        super(url);
+    }
+
 
     private NewsArticle getCurrentArticle(){
         List<NewsArticle> copyList = articles;
@@ -32,18 +48,16 @@ public class XmlParserCnbcTemplate extends DefaultHandler{
         return copyList.get(index);
     }
 
-    public List<NewsArticle> getArticles() {
-        return this.articles;
-    }
+    class CnbcParser extends DefaultHandler {
+
 
         @Override
         public void startDocument() {
             System.out.println("XML PARSING HAS BEEN STARTED");
         }
 
-
         @Override
-        public void characters(char[] ch, int start, int length){
+        public void characters(char[] ch, int start, int length) {
             if (elementValue == null) {
                 elementValue = new StringBuilder();
             } else {
@@ -55,7 +69,7 @@ public class XmlParserCnbcTemplate extends DefaultHandler{
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) {
-            switch (qName){
+            switch (qName) {
                 case "channel":
                     articles = new ArrayList<>();
                 case ITEM:
@@ -82,7 +96,7 @@ public class XmlParserCnbcTemplate extends DefaultHandler{
 
         @Override
         public void endElement(String uri, String localName, String qName) {
-            switch (qName){
+            switch (qName) {
                 case TITLE:
                     getCurrentArticle().setTitle(elementValue.toString());
                     break;
@@ -105,5 +119,5 @@ public class XmlParserCnbcTemplate extends DefaultHandler{
         public void endDocument() {
             System.out.println("PARSING IS STOPPED");
         }
-
     }
+}

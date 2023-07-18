@@ -1,6 +1,7 @@
 package timofey.xmlParser;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import timofey.entities.NewsArticle;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -11,20 +12,19 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
-class XMLParser extends DefaultHandler {
+public abstract class XMLParser {
 
     private File xmlDocument;
-    public XMLParser(String url, DefaultHandler defaultHandler) throws ParserConfigurationException, SAXException, IOException {
-        this.xmlDocument =  getBodyFromRequest(url);
 
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        SAXParser parser = factory.newSAXParser();
-        parser.parse(this.getXmlDocument(), defaultHandler);
-        String tempFileName = this.getXmlDocument().getName();
-        boolean isDeleted = this.deleteTempFile();
-        System.out.println(tempFileName + " id deleted: " + isDeleted);
+    public StringBuilder elementValue;
+
+    public abstract List<NewsArticle> parseXml() throws ParserConfigurationException, SAXException, IOException;
+    public XMLParser(String url){
+        this.xmlDocument =  getBodyFromRequest(url);
     }
+
 
     private File getBodyFromRequest(String url){
         HttpClient client = HttpClient.newHttpClient();
