@@ -19,10 +19,10 @@ public class MessageHandler {
     private InlineKeyboardMarkup defaultMenuKeyboard;
     private SendMessage replyMessage;
 
-
     public MessageHandler(){
 
         this.replyMessage = new SendMessage();
+
     }
 
     public SendMessage getSendMessage() {
@@ -30,7 +30,8 @@ public class MessageHandler {
         replyMessage.setChatId(chatId);
 
         //является ли сообщение командой
-        if (Arrays.stream(Commands.values()).map(x -> x.getRawCommand()).collect(Collectors.joining()).contains(messageText)){
+        if (messageText.startsWith("/") ||
+                Arrays.stream(Commands.values()).map(x -> x.getRawCommand()).collect(Collectors.toList()).contains(messageText)){
             if(messageText.equals(Commands.start.getRawCommand())) {
                 replyMessage.setText("Выберите новостной источник:");
                 replyMessage.setReplyMarkup(defaultMenuKeyboard);

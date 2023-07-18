@@ -10,12 +10,8 @@ import timofey.config.SourceInit;
 import timofey.entities.NewsArticle;
 import timofey.keyboard.TopicsKeyboard;
 import timofey.utils.Resources;
-import timofey.xmlParser.XMLCNBCParse;
-import timofey.xmlParser.XMLParserByUrl;
-
+import timofey.xmlParser.XmlParserCnbcTemplate;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -68,8 +64,7 @@ public class CallBackQueryHandler {
                         sb.append(key + "\n");
                         sb.append(rssResources.getResourceMap().get(key));
 
-
-                        XMLCNBCParse xmlParser = new XMLCNBCParse(rssResources.getResourceMap().get(key),rssResources);
+                        XmlParserCnbcTemplate xmlParser = new XmlParserCnbcTemplate(rssResources.getResourceMap().get(key));
                         List<NewsArticle> list = xmlParser.getArticles();
                         for (NewsArticle s:
                              list) {

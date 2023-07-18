@@ -3,19 +3,14 @@ package timofey.xmlParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import timofey.config.SourceInit;
 import timofey.entities.NewsArticle;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class XMLCNBCParse extends XMLParserByUrl{
+public class XmlParserCnbcTemplate extends DefaultHandler{
     private static final String ITEM = "item";
     private static final String TITLE = "title";
     private static final String LINK = "link";
@@ -23,33 +18,13 @@ public class XMLCNBCParse extends XMLParserByUrl{
     private static final String DESCRIPTION = "description";
     private static final String PUB_DATE = "pubDate";
 
-
-
     private List<NewsArticle> articles;
     private StringBuilder elementValue;
 
-    public XMLCNBCParse(String url, SourceInit rssResources) throws ParserConfigurationException, SAXException, IOException {
-        super(url, rssResources);
-
-        if(this != null) {
-
-            SaxRss saxRss = new SaxRss();
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            SAXParser parser = factory.newSAXParser();
-            parser.parse(this.getXmlDocument(), saxRss);
-            String tempFileName = this.getXmlDocument().getName();
-            boolean isDeleted = this.deleteTempFile();
-
-            System.out.println("file: " + tempFileName +" is deleted: " +isDeleted );
-        }
-
+    public XmlParserCnbcTemplate(String url) throws ParserConfigurationException, SAXException, IOException {
+        XMLParser xmlParserByUrl = new XMLParser(url, this);
+        System.out.println();
     }
-
-    @Override
-    protected NewsArticle[] parseXML(String xml) {
-        return null;
-    }
-
 
     private NewsArticle getCurrentArticle(){
         List<NewsArticle> copyList = articles;
@@ -61,7 +36,6 @@ public class XMLCNBCParse extends XMLParserByUrl{
         return this.articles;
     }
 
-    class SaxRss extends DefaultHandler{
         @Override
         public void startDocument() {
             System.out.println("XML PARSING HAS BEEN STARTED");
@@ -74,6 +48,8 @@ public class XMLCNBCParse extends XMLParserByUrl{
                 elementValue = new StringBuilder();
             } else {
                 elementValue.append(ch, start, length);
+
+
             }
         }
 
@@ -131,4 +107,3 @@ public class XMLCNBCParse extends XMLParserByUrl{
         }
 
     }
-}

@@ -1,45 +1,38 @@
 package timofey.xmlParser;
-
-import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import timofey.config.SourceInit;
-import timofey.entities.NewsArticle;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public abstract class XMLParserByUrl extends DefaultHandler {
+class XMLParser extends DefaultHandler {
 
-    private NewsArticle[] articles;
-    private SourceInit rssResources;
     private File xmlDocument;
-    private String httpOutput;
-    public XMLParserByUrl(String url, SourceInit rssResources){
-        this.rssResources = rssResources;
-        String xml = getBodyFromRequest(url);
-        this.articles = parseXML(xml);
+    public XMLParser(String url, DefaultHandler defaultHandler) throws ParserConfigurationException, SAXException, IOException {
+        this.xmlDocument =  getBodyFromRequest(url);
+
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser parser = factory.newSAXParser();
+        parser.parse(this.getXmlDocument(), defaultHandler);
+        String tempFileName = this.getXmlDocument().getName();
+        boolean isDeleted = this.deleteTempFile();
+        System.out.println(tempFileName + " id deleted: " + isDeleted);
     }
 
-    //TODO
-    public XMLParserByUrl(String[] urls){
-
-    }
-
-    protected abstract NewsArticle[] parseXML(String xml);
-    private String getBodyFromRequest(String url){
+    private File getBodyFromRequest(String url){
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request;
         HttpResponse httpResponse;
         try {
             request = HttpRequest.newBuilder()
                     .uri(new URI(url))
-//                    .version(HttpClient.Version.HTTP_2)
                     .GET()
                     .build();
 
@@ -54,33 +47,22 @@ public abstract class XMLParserByUrl extends DefaultHandler {
             throw new RuntimeException(e);
         }
 
-        String output =  httpResponse.body().toString();
-        File file = convertStringToXMLDocument(output);
-        this.httpOutput = output;
-        this.xmlDocument  = file;
-        return output;
+        File file = convertStringToXMLDocument(httpResponse);
+        return file;
     }
-    private  File convertStringToXMLDocument(String xmlString) {
-        //Parser that produces DOM object trees from XML content
-
-//        File file = new File(path);
+    private File convertStringToXMLDocument(HttpResponse xmlResponse) {
+        String xmlString = xmlResponse.body().toString();
         xmlDocument = null;
         try {
             xmlDocument = File.createTempFile("tempData", ".xml");
-
-            FileWriter writer = new FileWriter(xmlDocument);
-            writer.write(xmlString);
-            writer.close();
+            OutputStream outputStream = new FileOutputStream(xmlDocument);
+            outputStream.write(xmlString.getBytes());
         } catch (IOException e) {
             System.out.println("An error occurred while converting XML string to file.");
             e.printStackTrace();
         }
         return xmlDocument;
 
-    }
-
-     public String getHttpOutput() {
-        return httpOutput;
     }
 
     public File getXmlDocument() {
