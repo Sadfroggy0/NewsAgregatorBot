@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.xml.sax.SAXException;
 import timofey.config.SourceInit;
+import timofey.db.services.NewsArticleServiceImpl;
 import timofey.entities.NewsArticle;
 import timofey.keyboard.TopicsKeyboard;
 import timofey.utils.Resources;
@@ -28,6 +29,8 @@ public class CallBackQueryHandler {
     InlineKeyboardMarkup defaultKeyboard;
     @Autowired
     SourceInit rssResources;
+    @Autowired
+    NewsArticleServiceImpl newsArticleService;
     private List<SendMessage> messageList;
     private static final int MAX_MESSAGE_SIZE = 4096;
 
@@ -62,14 +65,17 @@ public class CallBackQueryHandler {
             }
             else if (rssResources.getResourceMap().containsKey(userMessage)){
                 for (String key : rssResources.getResourceMap().keySet()) {
+                    String topic = key.split("\\.")[1];
                     if(userMessage.equals(key)){
 
                         XMLParser xmlParser = new XmlParserCnbcTemplate(rssResources.getResourceMap().get(key));
                         List<NewsArticle> list = xmlParser.parseXml();
+                        list.remove(0);
                         StringBuilder sb = new StringBuilder();
 
                         for (int i = 0; i < list.size(); i++){
                             NewsArticle article = list.get(i);
+                            article.setTopic(topic);
                             replyMessage = new SendMessage();
                             replyMessage.setChatId(userChatId);
                             if(sb.toString().length() + article.toString().length() <= MAX_MESSAGE_SIZE ){
@@ -87,6 +93,7 @@ public class CallBackQueryHandler {
                         replyMessage.setReplyMarkup(defaultKeyboard);
                         messageList.add(replyMessage);
                     }
+
                 }
             }
         }

@@ -63,6 +63,7 @@ public class BotConfig extends TelegramLongPollingBot {
                 List<SendMessage> sendMessageList = callBackQueryHandler.getReplyMessage();
                 for (SendMessage message : sendMessageList
                 ) {
+                    message.setParseMode("Markdown");
                     execute(message);
                 }
 

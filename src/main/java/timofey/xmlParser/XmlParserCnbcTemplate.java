@@ -10,8 +10,9 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.sql.Timestamp;
+import java.util.*;
 
 public class XmlParserCnbcTemplate extends XMLParser{
     private static final String ITEM = "item";
@@ -107,7 +108,10 @@ public class XmlParserCnbcTemplate extends XMLParser{
                     getCurrentArticle().setDescription(elementValue.toString());
                     break;
                 case PUB_DATE:
-                    getCurrentArticle().setPubDate(elementValue.toString());
+                   String stringDate = elementValue.toString();
+                    Timestamp timestampDate = new Timestamp(new Date(stringDate).getTime());
+                    getCurrentArticle().setPubDate(timestampDate);
+
                     break;
                 case ID:
                     getCurrentArticle().setId(Long.valueOf(elementValue.toString()));
