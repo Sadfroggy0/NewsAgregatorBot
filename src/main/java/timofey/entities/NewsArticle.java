@@ -76,4 +76,11 @@ public class NewsArticle {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        String result;
+        result = this.title + "\n" + this.description + "\n" + this.link +"\n"+ this.pubDate;
+        return result;
+    }
 }

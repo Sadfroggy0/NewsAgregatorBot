@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.MessageEntity;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.xml.sax.SAXException;
 import timofey.config.SourceInit;
@@ -14,10 +16,7 @@ import timofey.xmlParser.XMLParser;
 import timofey.xmlParser.XmlParserCnbcTemplate;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -26,9 +25,11 @@ public class CallBackQueryHandler {
     private CallbackQuery callbackQuery;
     private SendMessage replyMessage;
     @Autowired
-    ReplyKeyboardMarkup replyKeyboardMarkup;
+    InlineKeyboardMarkup defaultKeyboard;
     @Autowired
     SourceInit rssResources;
+    private List<SendMessage> messageList;
+    private static final int MAX_MESSAGE_SIZE = 4096;
 
 
     public CallBackQueryHandler() {
@@ -40,12 +41,12 @@ public class CallBackQueryHandler {
         this.callbackQuery = callbackQuery;
     }
 
-    public SendMessage getReplyMessage() throws ParserConfigurationException, SAXException, IOException {
+    public List<SendMessage> getReplyMessage() throws ParserConfigurationException, SAXException, IOException {
+        messageList = new ArrayList<>();
 
         Long userChatId = callbackQuery.getFrom().getId();
         String userMessage = callbackQuery.getData();
         replyMessage.setChatId(userChatId);
-
         if(!userMessage.isEmpty()){
             if (Arrays.stream(Resources.values()).map(x->x.name().toLowerCase()).collect(Collectors.toList()).contains(userMessage.toLowerCase())){
                 Map <String,String> filterdMap = new HashMap<>();
@@ -57,25 +58,40 @@ public class CallBackQueryHandler {
                 TopicsKeyboard topicsKeyboard = new TopicsKeyboard(filterdMap);
                 replyMessage.setText("Выберите тему новостей");
                 replyMessage.setReplyMarkup(topicsKeyboard.getTopicKeyboard());
+                messageList.add(replyMessage);
             }
             else if (rssResources.getResourceMap().containsKey(userMessage)){
                 for (String key : rssResources.getResourceMap().keySet()) {
                     if(userMessage.equals(key)){
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(key + "\n");
 
                         XMLParser xmlParser = new XmlParserCnbcTemplate(rssResources.getResourceMap().get(key));
                         List<NewsArticle> list = xmlParser.parseXml();
+                        StringBuilder sb = new StringBuilder();
+
                         for (int i = 0; i < list.size(); i++){
                             NewsArticle article = list.get(i);
-                            sb.append(article.getTitle() + "\n" + article.getLink() + "\n" + article.getDescription() + "\n");
-                        }
-                        replyMessage.setText(sb.toString().trim());
+                            replyMessage = new SendMessage();
+                            replyMessage.setChatId(userChatId);
+                            if(sb.toString().length() + article.toString().length() <= MAX_MESSAGE_SIZE ){
+                                sb.append(article.toString());
+                            }
+                            else {
+                                replyMessage.setText(sb.toString());
+                                replyMessage.setReplyMarkup(null);
+                                messageList.add(replyMessage);
+                                sb = new StringBuilder();
 
+                            }
+                        }
+                        replyMessage.setText(sb.toString());
+                        replyMessage.setReplyMarkup(defaultKeyboard);
+                        messageList.add(replyMessage);
                     }
                 }
             }
         }
-        return replyMessage;
+        return messageList;
     }
+
+
 }

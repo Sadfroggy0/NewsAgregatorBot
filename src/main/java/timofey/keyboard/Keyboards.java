@@ -17,7 +17,7 @@ import java.util.List;
 @Configuration
 public class Keyboards{
     @Bean
-    @Scope("prototype")
+    @Scope("singleton")
     @Qualifier("defaultMenuKeyboard")
     public InlineKeyboardMarkup defaultMenuKeyboard(){
 
@@ -47,15 +47,13 @@ public class Keyboards{
                         keyboardButtonsRow1, keyboardButtonsRow2
                 )
         );
-//            rowList.add(keyboardButtonsRow1);
-//            rowList.add(keyboardButtonsRow2);
         inlineKeyboardMarkup.setKeyboard(rowList);
 
         return inlineKeyboardMarkup;
 
     }
     @Bean
-    @Scope("prototype")
+    @Scope("singleton")
     @Qualifier("sourceMenuKeyboard")
     public ReplyKeyboardMarkup sourceMenuKeyboard(){
 

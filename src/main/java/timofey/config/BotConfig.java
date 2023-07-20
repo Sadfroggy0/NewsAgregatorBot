@@ -6,6 +6,8 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.xml.sax.SAXException;
 import timofey.handler.CallBackQueryHandler;
@@ -13,6 +15,7 @@ import timofey.handler.MessageHandler;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class BotConfig extends TelegramLongPollingBot {
@@ -42,7 +45,7 @@ public class BotConfig extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived( Update update) {
-        if(update.hasMessage() && update.getMessage().hasText()) {
+        if (update.hasMessage() && update.getMessage().hasText()) {
             messageHandler.setChatId(update.getMessage().getChatId());
             messageHandler.setMessageText(update.getMessage().getText());
             try {
@@ -52,20 +55,22 @@ public class BotConfig extends TelegramLongPollingBot {
 
             }
         }
-        else if(update.hasCallbackQuery()){
+        else if (update.hasCallbackQuery()) {
             CallbackQuery callback = update.getCallbackQuery();
             callBackQueryHandler.setCallbackQuery(callback);
 
             try {
-                SendMessage sendMessage = callBackQueryHandler.getReplyMessage();
-                execute(sendMessage);
+                List<SendMessage> sendMessageList = callBackQueryHandler.getReplyMessage();
+                for (SendMessage message : sendMessageList
+                ) {
+                    execute(message);
+                }
+
 
             } catch (TelegramApiException | ParserConfigurationException | SAXException | IOException e) {
 
             }
 
         }
-
-
     }
 }
