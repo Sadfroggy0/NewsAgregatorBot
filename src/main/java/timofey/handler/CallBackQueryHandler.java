@@ -70,9 +70,7 @@ public class CallBackQueryHandler {
 
                         XMLParser xmlParser = new XmlParserCnbcTemplate(rssResources.getResourceMap().get(key));
                         List<NewsArticle> list = xmlParser.parseXml();
-                        list.remove(0);
                         StringBuilder sb = new StringBuilder();
-
                         for (int i = 0; i < list.size(); i++){
                             NewsArticle article = list.get(i);
                             article.setTopic(topic);

@@ -22,8 +22,6 @@ public class XmlParserCnbcTemplate extends XMLParser{
     private static final String DESCRIPTION = "description";
     private static final String PUB_DATE = "pubDate";
 
-    private List<NewsArticle> articles;
-
 
     @Override
     public List<NewsArticle> parseXml() throws ParserConfigurationException, SAXException, IOException {
@@ -34,23 +32,19 @@ public class XmlParserCnbcTemplate extends XMLParser{
         String tempFileName = getXmlDocument().getName();
         boolean isDeleted = this.deleteTempFile();
         System.out.println(tempFileName + " id deleted: " + isDeleted);
-        return articles;
+
+        return getArticleList();
 
     }
 
     public XmlParserCnbcTemplate(String url) throws ParserConfigurationException, IOException, SAXException {
         super(url);
-    }
 
-
-    private NewsArticle getCurrentArticle(){
-        List<NewsArticle> copyList = articles;
-        int index = copyList.size() - 1;
-        return copyList.get(index);
     }
 
     class CnbcParser extends DefaultHandler {
 
+        private List<NewsArticle> articleList = getArticleList();
 
         @Override
         public void startDocument() {
@@ -63,18 +57,16 @@ public class XmlParserCnbcTemplate extends XMLParser{
                 elementValue = new StringBuilder();
             } else {
                 elementValue.append(ch, start, length);
-
-
             }
         }
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) {
             switch (qName) {
-                case "channel":
-                    articles = new ArrayList<>();
+//                case "channel":
+////                    articleList = new ArrayList<>();
                 case ITEM:
-                    articles.add(new NewsArticle());
+                    articleList.add(new NewsArticle());
                     break;
                 case TITLE:
                     elementValue = new StringBuilder();
@@ -97,25 +89,26 @@ public class XmlParserCnbcTemplate extends XMLParser{
 
         @Override
         public void endElement(String uri, String localName, String qName) {
-            switch (qName) {
-                case TITLE:
-                    getCurrentArticle().setTitle(elementValue.toString());
-                    break;
-                case LINK:
-                    getCurrentArticle().setLink(elementValue.toString());
-                    break;
-                case DESCRIPTION:
-                    getCurrentArticle().setDescription(elementValue.toString());
-                    break;
-                case PUB_DATE:
-                   String stringDate = elementValue.toString();
-                    Timestamp timestampDate = new Timestamp(new Date(stringDate).getTime());
-                    getCurrentArticle().setPubDate(timestampDate);
-
-                    break;
-                case ID:
-                    getCurrentArticle().setId(Long.valueOf(elementValue.toString()));
-                    break;
+            if(getArticleList().size() > 0) {
+                switch (qName) {
+                    case TITLE:
+                        getLastArticle().setTitle(elementValue.toString());
+                        break;
+                    case LINK:
+                        getLastArticle().setLink(elementValue.toString());
+                        break;
+                    case DESCRIPTION:
+                        getLastArticle().setDescription(elementValue.toString());
+                        break;
+                    case PUB_DATE:
+                        String stringDate = elementValue.toString();
+                        Timestamp timestampDate = new Timestamp(new Date(stringDate).getTime());
+                        getLastArticle().setPubDate(timestampDate);
+                        break;
+                    case ID:
+                        getLastArticle().setId(Long.valueOf(elementValue.toString()));
+                        break;
+                }
             }
         }
 

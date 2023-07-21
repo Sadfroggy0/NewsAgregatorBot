@@ -12,6 +12,7 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class XMLParser {
@@ -19,10 +20,13 @@ public abstract class XMLParser {
     private File xmlDocument;
 
     public StringBuilder elementValue;
+    private List<NewsArticle> articleList;
 
     public abstract List<NewsArticle> parseXml() throws ParserConfigurationException, SAXException, IOException;
     public XMLParser(String url){
+
         this.xmlDocument =  getBodyFromRequest(url);
+        this.articleList = new ArrayList<>();
     }
 
 
@@ -65,6 +69,12 @@ public abstract class XMLParser {
 
     }
 
+    public NewsArticle getLastArticle(){
+        List<NewsArticle> list = this.articleList;
+        int index = list.size() - 1;
+        return list.get(index);
+    }
+
     public File getXmlDocument() {
         return xmlDocument;
     }
@@ -72,5 +82,11 @@ public abstract class XMLParser {
         return this.xmlDocument.delete();
     }
 
+    public List<NewsArticle> getArticleList() {
+        return articleList;
+    }
 
+    public void setArticleList(List<NewsArticle> articleList) {
+        this.articleList = articleList;
+    }
 }
