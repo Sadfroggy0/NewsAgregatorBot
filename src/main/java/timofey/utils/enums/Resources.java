@@ -1,4 +1,4 @@
-package timofey.utils;
+package timofey.utils.enums;
 
 public enum Resources {
     Reuters,

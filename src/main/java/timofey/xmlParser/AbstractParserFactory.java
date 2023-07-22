@@ -1,6 +1,6 @@
-package timofey.xmlParser.refactor;
+package timofey.xmlParser;
 
-import timofey.utils.Resources;
+import timofey.utils.enums.Resources;
 public class AbstractParserFactory {
     public static ParserFactory initParserFactory(Resources resource){
         switch (resource){

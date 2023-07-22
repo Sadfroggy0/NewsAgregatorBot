@@ -4,17 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.xml.sax.SAXException;
 import timofey.config.SourceInit;
 import timofey.db.services.NewsArticleServiceImpl;
 import timofey.entities.NewsArticle;
 import timofey.keyboard.TopicsKeyboard;
-import timofey.utils.Resources;
-import timofey.xmlParser.XMLParser;
-import timofey.xmlParser.XmlParserCnbcTemplate;
+import timofey.utils.enums.Resources;
+import timofey.xmlParser.AbstractParserFactory;
+import timofey.xmlParser.Parser;
+import timofey.xmlParser.ParserFactory;
+
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.*;
@@ -68,8 +68,12 @@ public class CallBackQueryHandler {
                     String topic = key.split("\\.")[1];
                     if(userMessage.equals(key)){
 
-                        XMLParser xmlParser = new XmlParserCnbcTemplate(rssResources.getResourceMap().get(key));
-                        List<NewsArticle> list = xmlParser.parseXml();
+//                        XMLParser xmlParser = new XmlParserCnbcTemplate(rssResources.getResourceMap().get(key));
+//                        List<NewsArticle> list = xmlParser.parseXml();
+
+                        ParserFactory factory = AbstractParserFactory.initParserFactory(Resources.CNBC);
+                        Parser parser = factory.createFactory();
+                        List<NewsArticle> list = parser.parse(rssResources.getResourceMap().get(key));
                         StringBuilder sb = new StringBuilder();
                         for (int i = 0; i < list.size(); i++){
                             NewsArticle article = list.get(i);
