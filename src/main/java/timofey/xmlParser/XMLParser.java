@@ -18,7 +18,6 @@ import java.util.List;
 public abstract class XMLParser {
 
     private File xmlDocument;
-
     public StringBuilder elementValue;
     private List<NewsArticle> articleList;
 
