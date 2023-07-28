@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -11,7 +12,7 @@ import java.util.Properties;
 @Component
 @Scope("singleton")
 public class SourceInit {
-   private final String resourcePath = "src/main/resources/sources.properties";
+   private final String resourcePath = "sources.properties";
 
     private Map<String,String> resourceMap;
     private Properties properties;
@@ -21,8 +22,10 @@ public class SourceInit {
         resourceMap = new HashMap<String,String>();
 
         try {
-            FileInputStream FIS = new FileInputStream(resourcePath);
-            properties.load(FIS);
+//            FileInputStream FIS = new FileInputStream(resourcePath);
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath);
+
+            properties.load(inputStream);
             for (String key: properties.stringPropertyNames()){
                 resourceMap.put(key, properties.getProperty(key));
             }
