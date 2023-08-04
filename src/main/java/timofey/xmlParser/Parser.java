@@ -15,7 +15,7 @@ import java.util.List;
 
 public abstract class Parser extends DefaultHandler {
     /**
-     * Дефолтные XML теги, которые присущи большинству RSS-лента
+     * Дефолтные XML теги, которые присущи большинству RSS-лент
      */
     public static final String ITEM = "item";
     public static final String TITLE = "title";

@@ -68,10 +68,13 @@ public class CallBackQueryHandler {
                     String topic = key.split("\\.")[1];
                     if(userMessage.equals(key)){
 
-//                        XMLParser xmlParser = new XmlParserCnbcTemplate(rssResources.getResourceMap().get(key));
-//                        List<NewsArticle> list = xmlParser.parseXml();
+                        ParserFactory factory = null;
+                        String sourceType = key.split("\\.")[0];
+                        if(sourceType.equals(Resources.Reuters.name().toLowerCase()))
+                            factory =  AbstractParserFactory.initParserFactory(Resources.Reuters);
+                        else if (sourceType.equals(Resources.CNBC.name().toLowerCase()))
+                            factory = AbstractParserFactory.initParserFactory(Resources.CNBC);
 
-                        ParserFactory factory = AbstractParserFactory.initParserFactory(Resources.CNBC);
                         Parser parser = factory.createFactory();
                         List<NewsArticle> list = parser.parse(rssResources.getResourceMap().get(key));
                         StringBuilder sb = new StringBuilder();

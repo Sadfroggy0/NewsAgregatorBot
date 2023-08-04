@@ -74,7 +74,7 @@ public class CnbcParser extends Parser {
         }
     }
 
-    private NewsArticle getLastArticle(){
+    protected NewsArticle getLastArticle(){
         List<NewsArticle> list = getArticleList();
         int index = list.size() - 1;
         return list.get(index);
