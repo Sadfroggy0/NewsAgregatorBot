@@ -3,9 +3,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import timofey.utils.enums.Commands;
-
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -13,14 +13,13 @@ import java.util.stream.Collectors;
 @Component
 public class MessageHandler {
     private Long chatId;
-    private String messageText;
+    private Message message;
     @Autowired
     @Qualifier("defaultMenuKeyboard")
     private InlineKeyboardMarkup defaultMenuKeyboard;
     private SendMessage replyMessage;
 
     public MessageHandler(){
-
         this.replyMessage = new SendMessage();
 
     }
@@ -30,14 +29,14 @@ public class MessageHandler {
         replyMessage.setChatId(chatId);
 
         //является ли сообщение командой
-        if (messageText.startsWith("/") ||
-                Arrays.stream(Commands.values()).map(x -> x.getRawCommand()).collect(Collectors.toList()).contains(messageText)){
-            if(messageText.equals(Commands.start.getRawCommand())) {
+        if (message.getText().startsWith("/") ||
+                Arrays.stream(Commands.values()).map(x -> x.getRawCommand()).collect(Collectors.toList()).contains(message.getText())){
+            if(message.getText().equals(Commands.start.getRawCommand())) {
                 replyMessage.setText("Выберите новостной источник:");
                 replyMessage.setReplyMarkup(defaultMenuKeyboard);
                 return replyMessage;
 
-            } else if (messageText.equals(Commands.latest.getRawCommand())) {
+            } else if (message.getText().equals(Commands.latest.getRawCommand())) {
                 replyMessage.setText("Вы выбрали получение новстоей за сутки");
                 replyMessage.setReplyMarkup(null);
                 return replyMessage;
@@ -60,8 +59,8 @@ public class MessageHandler {
         this.chatId = chatId;
     }
 
-    public void setMessageText(String messageText) {
-        this.messageText = messageText;
+    public void setMessage(Message message) {
+        this.message = message;
     }
 
 

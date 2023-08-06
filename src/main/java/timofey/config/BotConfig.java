@@ -47,7 +47,7 @@ public class BotConfig extends TelegramLongPollingBot {
     public void onUpdateReceived( Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
             messageHandler.setChatId(update.getMessage().getChatId());
-            messageHandler.setMessageText(update.getMessage().getText());
+            messageHandler.setMessage(update.getMessage());
             try {
                 execute(messageHandler.getSendMessage());
 
