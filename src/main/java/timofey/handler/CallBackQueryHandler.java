@@ -1,15 +1,18 @@
 package timofey.handler;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.xml.sax.SAXException;
 import timofey.config.SourceInit;
 import timofey.db.services.NewsArticleServiceImpl;
 import timofey.entities.NewsArticle;
 import timofey.keyboard.TopicsKeyboard;
+import timofey.utils.enums.Commands;
 import timofey.utils.enums.Resources;
 import timofey.xmlParser.AbstractParserFactory;
 import timofey.xmlParser.Parser;
@@ -26,7 +29,19 @@ public class CallBackQueryHandler {
     private CallbackQuery callbackQuery;
     private SendMessage replyMessage;
     @Autowired
+    @Qualifier("defaultMenuKeyboard")
     InlineKeyboardMarkup defaultKeyboard;
+    @Autowired
+    @Qualifier("subscriptionMenu")
+    InlineKeyboardMarkup subMenu;
+
+    @Autowired
+    @Qualifier("optionCnbcChoice")
+    InlineKeyboardMarkup optionCnbcChoice;
+
+    @Autowired
+    @Qualifier("sourceMultipleChoice")
+    InlineKeyboardMarkup sourceMultipleChoice;
     @Autowired
     SourceInit rssResources;
     @Autowired
@@ -101,6 +116,28 @@ public class CallBackQueryHandler {
 
                 }
             }
+
+            else if (userMessage.equals(Commands.subscription.name())) {
+                replyMessage.setReplyMarkup(subMenu);
+                replyMessage.setText("Параметры подписки");
+                messageList.add(replyMessage);
+            }
+            else if(userMessage.equals(Commands.certainSourceSub.name())){
+                replyMessage.setReplyMarkup(sourceMultipleChoice);
+                replyMessage.setText("Выбор ресурса для подписки");
+                messageList.add(replyMessage);
+
+            }
+            else if(userMessage.equals(Commands.cnbcSub.name())){
+                replyMessage.setReplyMarkup(optionCnbcChoice);
+                replyMessage.setText("Выбирите темы");
+                messageList.add(replyMessage);
+
+            }
+            else if (userMessage.equals(Commands.reutersSub)) {
+
+            }
+
         }
         return messageList;
     }

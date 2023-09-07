@@ -1,17 +1,11 @@
 package timofey.config;
-
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.xml.sax.SAXException;
 import timofey.automailing.UpdatesChecker;
@@ -21,7 +15,6 @@ import timofey.handler.MessageHandler;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Component
 public class BotConfig extends TelegramLongPollingBot implements BotCustomInterface {
@@ -79,18 +72,17 @@ public class BotConfig extends TelegramLongPollingBot implements BotCustomInterf
                 }
 
             } catch (TelegramApiException | ParserConfigurationException | SAXException | IOException e) {
-
+                System.out.println(e.getMessage());
             }
 
         }
     }
     @Override
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 120000)
     public void scheduledMessage(){
         Thread thread = new Thread(){
             @Override
             public void run() {
-
                 SendMessage sendMessage = checker.check();
                 sendMessage.setParseMode("Markdown");
                 try {

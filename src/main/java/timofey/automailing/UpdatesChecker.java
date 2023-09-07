@@ -9,14 +9,6 @@ import timofey.db.services.NewsArticleServiceImpl;
 import timofey.db.services.UserServiceImpl;
 import timofey.entities.NewsArticle;
 import timofey.entities.User;
-import timofey.utils.enums.Resources;
-import timofey.utils.httpServices.CustomHttpRequest;
-import timofey.xmlParser.AbstractParserFactory;
-import timofey.xmlParser.Parser;
-import timofey.xmlParser.ParserFactory;
-
-import java.io.File;
-import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +28,7 @@ public class UpdatesChecker {
     private void init(){
         if(newsArticleService != null && userService != null && sources != null){
             userList = userService.findAll();
-            newsArticle = newsArticleService.findById(90L);
+            newsArticle = newsArticleService.findById(80L);
             sourcesMap = sources.getResourceMap();
         }
     }
@@ -46,14 +38,7 @@ public class UpdatesChecker {
         sendMessage.setText(newsArticle.toString());
         sendMessage.setReplyMarkup(null);
         System.out.println("UPDATED INFO FROM DB");
-
-        for (String key:sourcesMap.keySet()) {
-            ParserFactory parserFactory = AbstractParserFactory.initParserFactory(Resources.CNBC);
-            Parser parser = parserFactory.createFactory();
-           List<NewsArticle> articleList = parser.parse(sourcesMap.get(key));
-
-        }
-
+        
         return sendMessage;
     }
 }
