@@ -4,6 +4,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -62,6 +63,11 @@ public class BotConfig extends TelegramLongPollingBot implements BotCustomInterf
         else if (update.hasCallbackQuery()) {
             CallbackQuery callback = update.getCallbackQuery();
             callBackQueryHandler.setCallbackQuery(callback);
+
+//            update.getCallbackQuery().getMessage().getChatId();
+//            update.getCallbackQuery().getMessage().getMessageId();
+//            EditMessageReplyMarkup editMessageReplyMarkup = new EditMessageReplyMarkup();
+//            editMessageReplyMarkup.setChatId(message.getChatId());
 
             try {
                 List<SendMessage> sendMessageList = callBackQueryHandler.getReplyMessage();

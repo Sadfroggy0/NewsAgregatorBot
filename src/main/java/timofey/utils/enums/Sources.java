@@ -1,6 +1,6 @@
 package timofey.utils.enums;
 
-public enum Resources {
+public enum Sources {
     Reuters,
     CNBC,
     RBK
