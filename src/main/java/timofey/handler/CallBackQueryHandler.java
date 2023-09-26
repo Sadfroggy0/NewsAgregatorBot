@@ -9,7 +9,7 @@ import org.xml.sax.SAXException;
 import timofey.config.SourceInit;
 import timofey.db.services.NewsArticleServiceImpl;
 import timofey.entities.NewsArticle;
-import timofey.keyboard.TopicsKeyboard;
+import timofey.meta.usersMeta.KeyboardMeta;
 import timofey.utils.enums.Commands;
 import timofey.utils.enums.Sources;
 import timofey.xmlParser.AbstractParserFactory;
@@ -19,7 +19,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 @Component
 public class CallBackQueryHandler {
@@ -36,7 +35,7 @@ public class CallBackQueryHandler {
     private NewsArticleServiceImpl newsArticleService;
     private List<SendMessage> messageList;
     private static final int MAX_MESSAGE_SIZE = 4096;
-    private Stack<InlineKeyboardMarkup> keyboardHistory;
+    private KeyboardMeta keyboardMeta;
 
     public CallBackQueryHandler(
             @Qualifier("defaultMenuKeyboard") InlineKeyboardMarkup defaultKeyboard,
@@ -46,11 +45,11 @@ public class CallBackQueryHandler {
             @Qualifier("sourceMultipleChoice") InlineKeyboardMarkup sourceMultipleChoice,
             @Qualifier("cnbcTopicsKeyboard") InlineKeyboardMarkup cnbcTopicsKeyboard,
             @Qualifier("reutersTopicsKeyboard") InlineKeyboardMarkup reutersTopicsKeyboard,
+            KeyboardMeta keyboardMeta,
             SourceInit sourceInit,
             NewsArticleServiceImpl newsArticleService
             ) {
 
-        this.keyboardHistory = new Stack<>();
         this.replyMessage = new SendMessage();
 
         this.defaultKeyboard = defaultKeyboard;
@@ -62,8 +61,7 @@ public class CallBackQueryHandler {
         this.reutersTopicsKeyboard = reutersTopicsKeyboard;
         this.rssResources = sourceInit;
         this.newsArticleService = newsArticleService;
-
-
+        this.keyboardMeta = keyboardMeta;
     }
 
     public void setCallbackQuery(CallbackQuery callbackQuery) {
@@ -71,33 +69,33 @@ public class CallBackQueryHandler {
     }
 
     public List<SendMessage> getReplyMessage() throws ParserConfigurationException, SAXException, IOException {
-        if(keyboardHistory.size() == 0) keyboardHistory.add(defaultKeyboard);
 
         messageList = new ArrayList<>();
-        Long userChatId = callbackQuery.getFrom().getId();
+//        Long userChatId = callbackQuery.getFrom().getId();
+        Long userId = callbackQuery.getMessage().getChatId();
         String userMessage = callbackQuery.getData();
-        replyMessage.setChatId(userChatId);
+        replyMessage.setChatId(userId);
+
+        Stack<InlineKeyboardMarkup> usersKeyboards = keyboardMeta.getKeyboardByUserId(userId);
+        if(usersKeyboards.size() == 0) usersKeyboards.add(defaultKeyboard);
         if(!userMessage.isEmpty()){
             if (Arrays.stream(Sources.values()).map(x->x.name().toLowerCase()).collect(Collectors.toList()).contains(userMessage.toLowerCase())){
-//                Map <String,String> filterdMap = new HashMap<>();
-//                for (Map.Entry<String, String> entry : rssResources.getResourceMap().entrySet()) {
-//                    if (entry.getKey().toLowerCase().contains(userMessage.toLowerCase())) {
-//                        filterdMap.put(entry.getKey(), entry.getValue());
-//                    }
-//                }
-//                TopicsKeyboard topicsKeyboard = new TopicsKeyboard(filterdMap);
+
                 if(userMessage.equals(Sources.CNBC.name())){
                     replyMessage.setReplyMarkup(cnbcTopicsKeyboard);
-                    keyboardHistory.add(cnbcTopicsKeyboard);
+                    usersKeyboards.add(cnbcTopicsKeyboard);
                 }
                 else if(userMessage.equals(Sources.Reuters.name())){
                     replyMessage.setReplyMarkup(reutersTopicsKeyboard);
-                    keyboardHistory.add(reutersTopicsKeyboard);
+                    usersKeyboards.add(reutersTopicsKeyboard);
                 }
+
                 else replyMessage.setReplyMarkup(defaultKeyboard);
+
                 replyMessage.setText("Выберите тему новостей");
                 messageList.add(replyMessage);
             }
+
             else if (rssResources.getResourceMap().containsKey(userMessage)){
                 for (String key : rssResources.getResourceMap().keySet()) {
                     String topic = key.split("\\.")[1];
@@ -117,7 +115,7 @@ public class CallBackQueryHandler {
                             NewsArticle article = list.get(i);
                             article.setTopic(topic);
                             replyMessage = new SendMessage();
-                            replyMessage.setChatId(userChatId);
+                            replyMessage.setChatId(userId);
                             if(sb.toString().length() + article.toString().length() <= MAX_MESSAGE_SIZE ){
                                 sb.append(article.toString());
                             }
@@ -126,11 +124,10 @@ public class CallBackQueryHandler {
                                 replyMessage.setReplyMarkup(null);
                                 messageList.add(replyMessage);
                                 sb = new StringBuilder();
-
                             }
                         }
                         replyMessage.setText(sb.toString());
-                        replyMessage.setReplyMarkup(defaultKeyboard);
+                        replyMessage.setReplyMarkup(usersKeyboards.peek());
                         messageList.add(replyMessage);
                     }
 
@@ -140,14 +137,14 @@ public class CallBackQueryHandler {
             else if (userMessage.equals(Commands.subscription.name())) {
                 replyMessage.setReplyMarkup(subMenu);
                 replyMessage.setText("Параметры подписки");
-                keyboardHistory.add(subMenu);
+                usersKeyboards.add(subMenu);
 
                 messageList.add(replyMessage);
             }
             else if(userMessage.equals(Commands.certainSourceSub.name())){
                 replyMessage.setReplyMarkup(sourceMultipleChoice);
                 replyMessage.setText("Выбор ресурса для подписки");
-                keyboardHistory.add(sourceMultipleChoice);
+                usersKeyboards.add(sourceMultipleChoice);
 
                 messageList.add(replyMessage);
 
@@ -155,32 +152,33 @@ public class CallBackQueryHandler {
             else if(userMessage.equals(Commands.cnbcSub.name())){
                 replyMessage.setReplyMarkup(optionCnbcChoice);
                 replyMessage.setText("Выберите темы");
-                keyboardHistory.add(optionCnbcChoice);
+                usersKeyboards.add(optionCnbcChoice);
 
                 messageList.add(replyMessage);
             }
             else if (userMessage.equals(Commands.reutersSub.name())) {
                 replyMessage.setReplyMarkup(optionReutersChoice);
                 replyMessage.setText("Выберите темы");
-                keyboardHistory.add(optionReutersChoice);
+                usersKeyboards.add(optionReutersChoice);
 
                 messageList.add(replyMessage);
             }
             else if(userMessage.equals("back")) {
-                InlineKeyboardMarkup previousKeyboard = back2previousKeyboard();
+                InlineKeyboardMarkup previousKeyboard = back2previousKeyboard(userId);
                 replyMessage.setReplyMarkup(previousKeyboard);
                 messageList.add(replyMessage);
-                System.out.println(keyboardHistory.toString());
             }
 
         }
+        keyboardMeta.updateMeta(userId, usersKeyboards);
         return messageList;
     }
 
-    private InlineKeyboardMarkup back2previousKeyboard() {
-        if(keyboardHistory.size() > 1){
-            keyboardHistory.pop();
-            return keyboardHistory.peek();
+    private InlineKeyboardMarkup back2previousKeyboard(Long userId) {
+        Stack<InlineKeyboardMarkup> history = keyboardMeta.getKeyboardByUserId(userId);
+        if(history != null && history.size() > 1){
+            history.pop();
+            return history.peek();
         }
         else return defaultKeyboard;
     }

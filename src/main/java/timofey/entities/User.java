@@ -3,6 +3,7 @@ package timofey.entities;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.List;
 
 @Entity
@@ -15,19 +16,28 @@ public class User {
     private Long telegramUserId;
     @Column(name = "user_name")
     private String userName;
-    @Column(name="subscribed_resources")
-    private List<Long> subResources;
-    @Column(name = "subscription_date")
-    private Timestamp subscriptionDate;
+//    @Column(name="subscribed_resources")
+//    private List<Long> subResources;
+//    @Column(name = "subscription_date")
+//    private Timestamp subscriptionDate;
     @Column(name = "chat_id")
     private Long chatId;
     public User(){}
     public User(Long telegramUserId, String userName,Timestamp subscriptionDate, Long chatId){
         this.telegramUserId = telegramUserId;
         this.userName = userName;
-        this.subscriptionDate = subscriptionDate;
+//        this.subscriptionDate = subscriptionDate;
         this.chatId = chatId;
     }
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_resource",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "resource_id")
+    )
+    private List<Resource> resources;
+
 
     public Long getId() {
         return id;
@@ -56,24 +66,6 @@ public class User {
         return this;
     }
 
-    public List<Long> getSubResources() {
-        return subResources;
-    }
-
-    public User setSubResources(List<Long> subResources) {
-        this.subResources = subResources;
-        return this;
-    }
-
-    public Timestamp getSubscriptionDate() {
-        return subscriptionDate;
-    }
-
-    public User setSubscriptionDate(Timestamp subscriptionDate) {
-        this.subscriptionDate = subscriptionDate;
-        return this;
-    }
-
     public Long getChatId() {
         return chatId;
 
@@ -82,5 +74,13 @@ public class User {
     public User setChatId(Long chatId) {
         this.chatId = chatId;
         return this;
+    }
+
+    public List<Resource> getResources() {
+        return resources;
+    }
+
+    public void setResources(List<Resource> resources) {
+        this.resources = resources;
     }
 }

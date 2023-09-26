@@ -12,4 +12,5 @@ import java.util.List;
 public interface NewsArticleRepository extends JpaRepository<NewsArticle, Long> {
     @Query
     List<NewsArticle> findByTitleContainingIgnoreCase(String title);
+
 }

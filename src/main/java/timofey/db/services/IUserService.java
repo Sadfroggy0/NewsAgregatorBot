@@ -1,6 +1,7 @@
 package timofey.db.services;
 
 import org.springframework.stereotype.Service;
+import timofey.entities.Resource;
 import timofey.entities.User;
 
 import java.util.List;
@@ -13,6 +14,9 @@ public interface IUserService {
     void save(User user);
     void delete(User user);
     void deleteByTelegramId(Long telegramId );
+    void subscribeUserToSource(int userId, int resourceId);
+    List<Resource> getSubscriptions(int id);
+
 
 
 

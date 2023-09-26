@@ -5,8 +5,10 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.xml.sax.SAXException;
 import timofey.automailing.UpdatesChecker;
@@ -24,6 +26,7 @@ public class BotConfig extends TelegramLongPollingBot implements BotCustomInterf
     private CallBackQueryHandler callBackQueryHandler;
     private TelegramConfig telegramConfig;
     private UpdatesChecker checker;
+    private SendMessage previousMessage;
 
 
     @Autowired
@@ -38,6 +41,7 @@ public class BotConfig extends TelegramLongPollingBot implements BotCustomInterf
         this.messageHandler = messageHandler;
         this.callBackQueryHandler = callBackQueryHandler;
         this.checker = checker;
+        this.previousMessage = null;
     }
     @Override
     public String getBotUsername() {
@@ -50,6 +54,7 @@ public class BotConfig extends TelegramLongPollingBot implements BotCustomInterf
 
     @Override
     public void onUpdateReceived( Update update) {
+
         if (update.hasMessage() && update.getMessage().hasText()) {
             messageHandler.setChatId(update.getMessage().getChatId());
             messageHandler.setMessage(update.getMessage());
@@ -63,24 +68,53 @@ public class BotConfig extends TelegramLongPollingBot implements BotCustomInterf
         else if (update.hasCallbackQuery()) {
             CallbackQuery callback = update.getCallbackQuery();
             callBackQueryHandler.setCallbackQuery(callback);
-
-//            update.getCallbackQuery().getMessage().getChatId();
-//            update.getCallbackQuery().getMessage().getMessageId();
-//            EditMessageReplyMarkup editMessageReplyMarkup = new EditMessageReplyMarkup();
-//            editMessageReplyMarkup.setChatId(message.getChatId());
-
             try {
                 List<SendMessage> sendMessageList = callBackQueryHandler.getReplyMessage();
                 for (SendMessage message : sendMessageList
                 ) {
-                    message.setParseMode("Markdown");
-                    execute(message);
-                }
+                    InlineKeyboardMarkup temp = (InlineKeyboardMarkup) message.getReplyMarkup();
 
+                    if (message.getText().contains("http")){
+                       if(message.getReplyMarkup() == null){
+                           message.setParseMode("Markdown");
+                           execute(message);
+                       }
+                       else {
+                           Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
+                           Long chatId = update.getCallbackQuery().getMessage().getChatId();
+
+                           EditMessageReplyMarkup editMessageReplyMarkup = new EditMessageReplyMarkup();
+                           editMessageReplyMarkup.setChatId(chatId);
+                           editMessageReplyMarkup.setMessageId(messageId);
+                           editMessageReplyMarkup.setReplyMarkup(temp);
+
+                           message.setParseMode("Markdown");
+                           execute(message);
+                           execute(editMessageReplyMarkup);
+                       }
+                    }
+                    else {
+                        Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
+                        Long chatId = update.getCallbackQuery().getMessage().getChatId();
+
+                        EditMessageReplyMarkup editMessageReplyMarkup = new EditMessageReplyMarkup();
+                        editMessageReplyMarkup.setChatId(chatId);
+                        editMessageReplyMarkup.setMessageId(messageId);
+                        editMessageReplyMarkup.setReplyMarkup(temp);
+
+                        EditMessageText editMessageText = new EditMessageText();
+                        editMessageText.setMessageId(messageId);
+                        editMessageText.setChatId(chatId);
+                        editMessageText.setText(message.getText());
+
+                        editMessageText.setParseMode("Markdown");
+                        execute(editMessageText);
+                        execute(editMessageReplyMarkup);
+                    }
+                }
             } catch (TelegramApiException | ParserConfigurationException | SAXException | IOException e) {
                 System.out.println(e.getMessage());
             }
-
         }
     }
     @Override

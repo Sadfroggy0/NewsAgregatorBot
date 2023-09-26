@@ -34,6 +34,8 @@ public class Keyboards{
     public Keyboards(SourceInit sourceInit){
         this.sources = sourceInit;
     }
+    private final String checked = "✓";
+    private final String unchecked = "❌";
 
     @Bean
     @Qualifier("defaultMenuKeyboard")
@@ -73,7 +75,6 @@ public class Keyboards{
         inlineKeyboardMarkup.setKeyboard(rowList);
 
         return inlineKeyboardMarkup;
-
     }
     @Bean
     @Qualifier("sourceMenuKeyboard")
