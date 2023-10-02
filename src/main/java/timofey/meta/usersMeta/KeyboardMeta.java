@@ -6,6 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+/**
+ * мета информация по клавиатурам
+ * нужно сохранять состояние клавиатуры для каждого пользователя
+ * не нужно хранить в БД, запись идет после запуска приложения
+ * перезапуск сервера = сброс клавиатур
+ */
 @Component
 public class KeyboardMeta {
     private Map<Long, Stack<InlineKeyboardMarkup>> userKeyboardMeta;

@@ -19,6 +19,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * класс, откуда приложение отправляет сообщения, приходящие из обработчиков
+ *
+ */
 @Component
 public class BotConfig extends TelegramLongPollingBot  {
 
@@ -73,8 +77,13 @@ public class BotConfig extends TelegramLongPollingBot  {
                 for (SendMessage message : sendMessageList
                 ) {
                     InlineKeyboardMarkup temp = (InlineKeyboardMarkup) message.getReplyMarkup();
-
-                    if (message.getText().contains("http")){
+                    /**TODO
+                    //такая ерунда для того, чтобы менять клавиатуру на предыдущем сообщении
+                    // чтобы не присылать новое сообщение с клавой, а редактировать старое
+                    //приходит несколько сообщений, потому что макс длина сообщения 4096 символов
+                     точно нужно переделать, выдает ошибку в логах при редактировании сообщения
+                     */
+                    if (message.getText().contains("http")){ // это условие для проверки, есть ли ссылка в ообщении
                        if(message.getReplyMarkup() == null){
                            message.setParseMode("Markdown");
                            execute(message);
@@ -82,7 +91,7 @@ public class BotConfig extends TelegramLongPollingBot  {
                        else {
                            Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
                            Long chatId = update.getCallbackQuery().getMessage().getChatId();
-
+                           // изменение сообщений
                            EditMessageReplyMarkup editMessageReplyMarkup = new EditMessageReplyMarkup();
                            editMessageReplyMarkup.setChatId(chatId);
                            editMessageReplyMarkup.setMessageId(messageId);
@@ -118,20 +127,4 @@ public class BotConfig extends TelegramLongPollingBot  {
         }
     }
 
-    @Scheduled(fixedRate = 120000)
-    public void scheduledMessage(){
-        Thread thread = new Thread(){
-            @Override
-            public void run() {
-                SendMessage sendMessage = checker.check();
-                sendMessage.setParseMode("Markdown");
-                try {
-                    execute(sendMessage);
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        };
-        thread.start();
-    }
 }

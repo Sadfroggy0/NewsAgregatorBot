@@ -10,8 +10,15 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+/**
+ * класс для http запроса
+ */
 public class CustomHttpRequest {
     private HttpResponse response;
+
+    /**
+     * метод для получения тела запроса по ссылке
+     */
     public HttpResponse getBodyFromRequest(String url){
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request;
@@ -37,6 +44,11 @@ public class CustomHttpRequest {
         return httpResponse;
 
     }
+
+    /**
+     метод для преобразования тела запроса во временный файл
+     нужно потом для парсинга XML
+     */
     public File convertStringToXMLDocument(HttpResponse xmlResponse) {
         String xmlString = xmlResponse.body().toString();
         File xmlDocument = null;

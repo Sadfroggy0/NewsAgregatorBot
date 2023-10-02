@@ -13,6 +13,14 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * главный класс, от которого наследуются разные парсеры
+ * DefaultHandler - класс библиоткеи SaxParser для парсинга XML документов
+ *
+ * пример создания парсера для источника
+ * ParserFactory factory = AbstractParserFactory.initParserFactory(Sources.CNBC);
+ * Parser parser = factory.createFactory();
+ */
 public abstract class Parser extends DefaultHandler {
     /**
      * Дефолтные XML теги, которые присущи большинству RSS-лент

@@ -16,6 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * класс с разными клавиатурами
+ */
 
 @Configuration
 public class Keyboards{

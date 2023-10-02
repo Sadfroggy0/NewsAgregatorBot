@@ -19,6 +19,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+/**
+ * класс для обработки callback сообщений
+ * Есть Callback, а есть просто текст
+ *
+ */
 
 @Component
 public class CallBackQueryHandler {
@@ -78,6 +83,7 @@ public class CallBackQueryHandler {
         if(usersKeyboards.size() == 0) usersKeyboards.add(defaultKeyboard);
 
         if(!userMessage.isEmpty()){
+            //идет проверка на тип сообщения, переделать на switch case для удобного понимания
             if (Arrays.stream(Sources.values()).map(x->x.name().toLowerCase()).collect(Collectors.toList()).contains(userMessage.toLowerCase())){
 
                 if(userMessage.equals(Sources.CNBC.name())){

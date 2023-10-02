@@ -10,6 +10,11 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 
+/**
+ * класс для обработки текстовых сообщений
+ * Есть Callback, а есть просто текст
+ *
+ */
 @Component
 public class MessageHandler {
     private Long chatId;

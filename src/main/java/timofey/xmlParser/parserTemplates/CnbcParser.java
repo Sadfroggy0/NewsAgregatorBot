@@ -8,6 +8,10 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * непосредственно сам парсер для источника
+ * нужно, потому что могут быть структурные особенности у каждого источника
+ */
 public class CnbcParser extends Parser {
 
     @Override
