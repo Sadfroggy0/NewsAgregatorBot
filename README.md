@@ -1,5 +1,5 @@
 # NewsAgregatorBot
-## перед началом работы нужно сосдать папку resources в корне и создать файлы и добавиьт в них записи: 
+## перед началом работы нужно создать папку resources в корне и создать файлы и добавиьт в них записи: 
   1) _application.properties_
     spring.datasource.url = jdbc:postgresql://localhost:5432/aggregator
   spring.datasource.username = ваше имя пользователя
