@@ -11,13 +11,7 @@ public class Resource {
     private Long id;
     private String name;
     private String url;
-
-    @ManyToMany
-    @JoinTable(
-            name = "user_resource",
-            joinColumns = @JoinColumn(name = "resource_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @ManyToMany(mappedBy = "resources")
     private List<User> users;
 
     public Long getId() {

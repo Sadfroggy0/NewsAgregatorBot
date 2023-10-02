@@ -15,7 +15,7 @@ public interface IUserService {
     void delete(User user);
     void deleteByTelegramId(Long telegramId );
     void subscribeUserToSource(int userId, int resourceId);
-    List<Resource> getSubscriptions(int id);
+    List<Resource> getAllSubscriptions();
 
 
 

@@ -21,7 +21,6 @@ public class SourceInit {
         resourceMap = new HashMap<String,String>();
 
         try {
-//            FileInputStream FIS = new FileInputStream(resourcePath);
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath);
 
             properties.load(inputStream);

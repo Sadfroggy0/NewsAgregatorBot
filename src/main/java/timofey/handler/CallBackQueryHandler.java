@@ -71,13 +71,12 @@ public class CallBackQueryHandler {
     public List<SendMessage> getReplyMessage() throws ParserConfigurationException, SAXException, IOException {
 
         messageList = new ArrayList<>();
-//        Long userChatId = callbackQuery.getFrom().getId();
         Long userId = callbackQuery.getMessage().getChatId();
         String userMessage = callbackQuery.getData();
         replyMessage.setChatId(userId);
-
         Stack<InlineKeyboardMarkup> usersKeyboards = keyboardMeta.getKeyboardByUserId(userId);
         if(usersKeyboards.size() == 0) usersKeyboards.add(defaultKeyboard);
+
         if(!userMessage.isEmpty()){
             if (Arrays.stream(Sources.values()).map(x->x.name().toLowerCase()).collect(Collectors.toList()).contains(userMessage.toLowerCase())){
 

@@ -16,21 +16,16 @@ public class User {
     private Long telegramUserId;
     @Column(name = "user_name")
     private String userName;
-//    @Column(name="subscribed_resources")
-//    private List<Long> subResources;
-//    @Column(name = "subscription_date")
-//    private Timestamp subscriptionDate;
     @Column(name = "chat_id")
     private Long chatId;
     public User(){}
     public User(Long telegramUserId, String userName,Timestamp subscriptionDate, Long chatId){
         this.telegramUserId = telegramUserId;
         this.userName = userName;
-//        this.subscriptionDate = subscriptionDate;
         this.chatId = chatId;
     }
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_resource",
             joinColumns = @JoinColumn(name = "user_id"),

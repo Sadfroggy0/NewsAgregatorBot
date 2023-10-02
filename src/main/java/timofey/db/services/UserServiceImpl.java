@@ -22,7 +22,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User findByTelegramId(Long telegramId) {
-        return userRepository.findByTelegramUserId(telegramId).get();
+        return userRepository.findByTelegramUserId(telegramId).orElse(null);
     }
 
     @Override
@@ -46,14 +46,13 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<Resource> getSubscriptions(int userId) {
-        User user = userRepository.findById((long) userId).orElse(null);
-        List<Resource> resources = new ArrayList<>();
-        if(user != null){
-            resources = user.getResources();
-        }
+    public void subscribeUserToSource(int userId, int resourceId) {
 
-        return resources;
+    }
+
+    @Override
+    public List<Resource> getAllSubscriptions() {
+        return null;
     }
 
 }

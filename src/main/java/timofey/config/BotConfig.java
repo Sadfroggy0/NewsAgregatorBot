@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
-public class BotConfig extends TelegramLongPollingBot implements BotCustomInterface {
+public class BotConfig extends TelegramLongPollingBot  {
 
     private MessageHandler messageHandler;
     private CallBackQueryHandler callBackQueryHandler;
@@ -117,7 +117,7 @@ public class BotConfig extends TelegramLongPollingBot implements BotCustomInterf
             }
         }
     }
-    @Override
+
     @Scheduled(fixedRate = 120000)
     public void scheduledMessage(){
         Thread thread = new Thread(){

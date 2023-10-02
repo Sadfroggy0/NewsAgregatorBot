@@ -33,6 +33,7 @@ public abstract class Parser extends DefaultHandler {
         this.articleList = new ArrayList<>();
     }
      public List<NewsArticle> parse(String url){
+
          CustomHttpRequest request = new CustomHttpRequest();
          HttpResponse response = request.getBodyFromRequest(url);
          this.xmlDocument = request.convertStringToXMLDocument(response);
