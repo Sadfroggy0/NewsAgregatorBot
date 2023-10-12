@@ -11,7 +11,7 @@ import java.util.Properties;
 @Component
 @Scope("singleton")
 public class SourceInit {
-   private final String resourcePath = "sources.properties";
+   private final String resourcePath = "config/sources.properties";
 
     private Map<String,String> resourceMap;
     private Properties properties;

@@ -32,7 +32,6 @@ public class UpdatesChecker {
     private void init(){
         if(newsArticleService != null && userService != null && sources != null){
             userList = userService.findAll();
-            newsArticle = newsArticleService.findById(80L);
             sourcesMap = sources.getResourceMap();
         }
     }
