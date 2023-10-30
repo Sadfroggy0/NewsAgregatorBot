@@ -14,9 +14,10 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User,Long> {
 
     Optional<User> findByTelegramUserId(Long id);
-    @Query("SELECT r.id FROM User u JOIN u.resources r WHERE u.id = :userId")
-    List<Resource> findResourcesByUserId(@Param("userId") Long id);
 
+    @Query("SELECT u.id FROM Resource r JOIN r.users u WHERE r.id = :resourceId")
+    List<User> findUsersByResourceId(@Param("resourceId") Long id);
 
+    Optional<User> findByChatId(Long chatId);
 
 }

@@ -27,7 +27,12 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User findById(Long id) {
-        return userRepository.findById(id).get();
+        return userRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+    }
+
+    @Override
+    public List<User> findUserSubscribedToResource(Long resourceId) {
+        return userRepository.findUsersByResourceId(resourceId);
     }
 
     @Override

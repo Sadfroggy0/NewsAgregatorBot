@@ -11,6 +11,7 @@ public interface IUserService {
     List<User> findAll();
     User findByTelegramId(Long telegramId);
     User findById(Long id);
+    List<User> findUserSubscribedToResource(Long resourceId);
     void save(User user);
     void delete(User user);
     void deleteByTelegramId(Long telegramId );
