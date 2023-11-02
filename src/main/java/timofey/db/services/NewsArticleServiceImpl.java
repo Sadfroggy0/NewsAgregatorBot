@@ -17,12 +17,22 @@ public class NewsArticleServiceImpl implements INewsArticleService{
 
     @Override
     public NewsArticle findById(Long id) {
-        return newsArticleRepository.findById(id).get();
+        return newsArticleRepository.findById(id).orElseThrow(IllegalArgumentException::new);
     }
 
     @Override
     public List<NewsArticle> findByTitle(String title) {
         return newsArticleRepository.findByTitleContainingIgnoreCase(title);
+    }
+
+    @Override
+    public List<NewsArticle> findByTopic(String topic) {
+        return newsArticleRepository.findByTopicIgnoreCase(topic);
+    }
+
+    @Override
+    public NewsArticle findByLink(String link) {
+        return newsArticleRepository.findByLink(link).orElseThrow(IllegalArgumentException::new);
     }
 
     @Override
