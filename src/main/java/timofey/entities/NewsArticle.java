@@ -87,9 +87,9 @@ public class NewsArticle {
     @Override
     public String toString() {
         String result;
-        result = "_" + this.title + "_" + "\n" +
+        result = "**" + this.title + "**" + "\n" +
                 this.description + "\n" +
-                this.link + "\n" +
+                "[Источник](" + this.link + ")" + "\n" +
                 this.pubDate + "\n" +"\n";
 
         return result;
