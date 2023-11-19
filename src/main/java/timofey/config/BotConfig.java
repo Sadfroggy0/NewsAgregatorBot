@@ -29,8 +29,7 @@ public class BotConfig extends TelegramLongPollingBot  {
     private MessageHandler messageHandler;
     private CallBackQueryHandler callBackQueryHandler;
     private TelegramConfig telegramConfig;
-    private UpdatesChecker checker;
-    private SendMessage previousMessage;
+
 
 
     @Autowired
@@ -44,8 +43,7 @@ public class BotConfig extends TelegramLongPollingBot  {
         this.telegramConfig = telegramConfig;
         this.messageHandler = messageHandler;
         this.callBackQueryHandler = callBackQueryHandler;
-        this.checker = checker;
-        this.previousMessage = null;
+
     }
     @Override
     public String getBotUsername() {
