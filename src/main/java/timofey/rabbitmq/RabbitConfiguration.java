@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import timofey.config.TelegramConfig;
+import timofey.handler.CallBackQueryHandler;
+import timofey.handler.MessageHandler;
 
 
 @Configuration
@@ -42,7 +45,12 @@ public class RabbitConfiguration {
         return new Queue("queue1");
     }
     @Bean
-    public RabbitMqListener getMqListener(){
-        return  new RabbitMqListener();
+    public RabbitMqListener getMqListener(TelegramConfig telegramConfig,
+                                            MessageHandler messageHandler,
+                                            CallBackQueryHandler callBackQueryHandler){
+        return  new RabbitMqListener(
+                telegramConfig,
+                messageHandler,
+                callBackQueryHandler);
     }
 }
