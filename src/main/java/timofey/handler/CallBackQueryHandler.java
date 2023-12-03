@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.xml.sax.SAXException;
 import timofey.config.SourceInit;
 import timofey.db.services.NewsArticleServiceImpl;
@@ -41,6 +42,7 @@ public class CallBackQueryHandler {
     private List<SendMessage> messageList;
     private static final int MAX_MESSAGE_SIZE = 4096;
     private KeyboardMeta keyboardMeta;
+    private Map<Long, List<String>> usersTopicsMap;
 
     public CallBackQueryHandler(
             @Qualifier("defaultMenuKeyboard") InlineKeyboardMarkup defaultKeyboard,
@@ -67,6 +69,7 @@ public class CallBackQueryHandler {
         this.rssResources = sourceInit;
         this.newsArticleService = newsArticleService;
         this.keyboardMeta = keyboardMeta;
+        this.usersTopicsMap = new HashMap<Long, List<String>>();
     }
 
     public void setCallbackQuery(CallbackQuery callbackQuery) {
@@ -172,6 +175,45 @@ public class CallBackQueryHandler {
                 InlineKeyboardMarkup previousKeyboard = back2previousKeyboard(userId);
                 replyMessage.setReplyMarkup(previousKeyboard);
                 messageList.add(replyMessage);
+            }
+            else if (usersKeyboards.lastElement().equals(optionCnbcChoice) ||
+                    usersKeyboards.lastElement().equals(optionReutersChoice)) {
+                String sourceType;
+                if (usersKeyboards.lastElement().equals(optionReutersChoice))
+                    sourceType = "reuters";
+                else
+                    sourceType = "cnbc";
+                String fullTopicName = sourceType + "." + userMessage;
+                if (rssResources.getResourceMap().containsKey(fullTopicName)) {
+                    if (!usersTopicsMap.containsKey(userId))
+                        usersTopicsMap.put(userId, new ArrayList<>());
+                    List<String> userTopics = usersTopicsMap.get(userId);
+                    if (userTopics.contains(fullTopicName)) {
+                        userTopics.remove(fullTopicName);
+                        for (List<InlineKeyboardButton> row : usersKeyboards.lastElement().getKeyboard()) {
+                            for (InlineKeyboardButton button : row) {
+                                if (button.getText().equals("✔️ " + userMessage)) {
+                                    button.setText(userMessage);
+                                    replyMessage.setReplyMarkup(usersKeyboards.lastElement());
+                                    messageList.add(replyMessage);
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        userTopics.add(fullTopicName);
+                        for (List<InlineKeyboardButton> row : usersKeyboards.lastElement().getKeyboard()) {
+                            for (InlineKeyboardButton button : row) {
+                                if (button.getText().equals(userMessage)) {
+                                    button.setText("✔️ " + userMessage);
+                                    replyMessage.setReplyMarkup(usersKeyboards.lastElement());
+                                    messageList.add(replyMessage);
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
 
         }
