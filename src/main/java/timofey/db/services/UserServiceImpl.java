@@ -26,6 +26,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public User findByChatId(Long chatId) {
+        return userRepository.findByChatId(chatId).orElse(null);
+    }
+
+    @Override
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(IllegalArgumentException::new);
     }
@@ -53,11 +58,6 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void subscribeUserToSource(int userId, int resourceId) {
 
-    }
-
-    @Override
-    public List<Resource> getAllSubscriptions() {
-        return null;
     }
 
 }
