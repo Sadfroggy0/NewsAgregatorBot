@@ -42,6 +42,7 @@ public class RabbitMqListener {
 //        return "received on queue handler and handled message: " + message;
 //    }
     @RabbitListener(queues = "CNBC")
+    @RabbitListener(queues = "Reuters")
     public String handleCnbcQueue(Update update) {
         CallbackQuery callback = update.getCallbackQuery();
         callBackQueryHandler.setCallbackQuery(callback);
@@ -66,11 +67,12 @@ public class RabbitMqListener {
 
         return sendMessageJson;
     }
-    @RabbitListener(queues = "Reuters")
-    public String handleReutersQueue(String message) {
-        logger.info("Received from Reuters: " + message);
-        return "received on queue handler and handled message: " + message;
-    }
+
+//    @RabbitListener(queues = "Reuters")
+//    public String handleReutersQueue(String message) {
+//        logger.info("Received from Reuters: " + message);
+//        return "received on queue handler and handled message: " + message;
+//    }
     @RabbitListener(queues = "ReutersSubscription")
     public String handleReutersSubscriptionQueue(String message) {
         logger.info("Received from ReutersSubscription: " + message);
