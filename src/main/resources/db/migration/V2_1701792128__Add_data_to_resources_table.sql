@@ -1,0 +1,15 @@
+INSERT INTO public.resources (name, url) VALUES
+    ('cnbc.economy', 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258'),
+    ('cnbc.finance', 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=10000664'),
+    ('cnbc.technology', 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=19854910'),
+    ('cnbc.politics', 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=10000113'),
+    ('cnbc.energy', 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=19836768'),
+    ('cnbc.business', 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=44877279'),
+    ('cnbc.earnings', 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=15839135'),
+    ('reuters.businessAndFinance', 'https://www.reutersagency.com/feed/?best-topics=business-finance&post_type=best'),
+    ('reuters.deals', 'https://www.reutersagency.com/feed/?best-topics=deals&post_type=best'),
+    ('reuters.politics', 'https://www.reutersagency.com/feed/?best-topics=political-general&post_type=best'),
+    ('reuters.tech', 'https://www.reutersagency.com/feed/?best-topics=tech&post_type=best'),
+    ('reuters.foreignExchangeAndFixedIncome', 'https://www.reutersagency.com/feed/?best-sectors=foreign-exchange-fixed-income&post_type=best'),
+    ('reuters.economy', 'https://www.reutersagency.com/feed/?best-sectors=economy&post_type=best'),
+    ('reuters.commoditiesAndEnergy', 'https://www.reutersagency.com/feed/?best-sectors=commodities-energy&post_type=best');
