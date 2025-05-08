@@ -103,9 +103,4 @@ public class RabbitMqListener {
         return sendMessageJson;
     }
 
-
-
-
-
-
 }
