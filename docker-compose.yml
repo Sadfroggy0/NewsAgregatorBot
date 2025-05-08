@@ -4,12 +4,12 @@ services:
   postgres:
     image: 'postgres:15'
     container_name: 'java-postgres'
+    ports:
+      - "5433:5432"
     environment:
       - 'POSTGRES_USER=postgres'
       - 'POSTGRES_HOST_AUTH_METHOD=trust'
       - 'POSTGRES_DB=aggregator'
-  app:
-    build: ./
-    container_name: 'java-app'
-    ports:
-      - '8080:8080'
+#  app:
+#    build: ./
+#    container_name: 'java-app'
