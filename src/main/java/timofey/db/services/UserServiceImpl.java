@@ -36,6 +36,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public User findByUserName(String user_name) {
+        return userRepository.findByUserName(user_name).orElse(null);
+    }
+
+    @Override
     public List<User> findUserSubscribedToResource(Long resourceId) {
         return userRepository.findUsersByResourceId(resourceId);
     }

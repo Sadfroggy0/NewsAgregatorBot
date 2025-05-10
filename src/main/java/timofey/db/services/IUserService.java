@@ -13,6 +13,7 @@ public interface IUserService {
     User findByChatId(Long chatId);
     User findById(Long id);
     List<User> findUserSubscribedToResource(Long resourceId);
+    User findByUserName(String user_name);
     void save(User user);
     void delete(User user);
     void deleteByTelegramId(Long telegramId);
